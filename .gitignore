@@ -8,6 +8,9 @@ env/
 
 # Docker
 docker-compose.yml
+Dockerrun.aws.json
+# Add zipped files
+*.zip
 
 # Python cache files
 __pycache__/

@@ -54,8 +54,8 @@ def load_articles_data():
         except Exception as e:
             logging.error(f"Error loading articles data from S3: {str(e)}")
             # Fallback to local file if available
-            if os.path.exists('data/all_articles.json'):
-                with open('data/all_articles.json', 'r') as f:
+            if os.path.exists('../data/all_articles.json'):
+                with open('../data/all_articles.json', 'r') as f:
                     return json.load(f)
             raise FileNotFoundError("No local articles data found")
     else:
