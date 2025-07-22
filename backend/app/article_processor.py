@@ -46,7 +46,8 @@ class ArticleProcessor:
     
     def __init__(self, 
                  base_url: str = 'https://www.economicsobservatory.com',
-                 articles_path: str = 'all_articles.json'):
+                 articles_path: str = 'data/all_articles.json'
+        ):
         self.base_url = base_url
         self.articles_path = articles_path
         self.articles = self._load_existing_articles()
@@ -56,7 +57,11 @@ class ArticleProcessor:
         """Load existing articles from JSON file or return empty dict if file doesn't exist."""
         if os.path.exists(self.articles_path):
             with open(self.articles_path, 'r') as f:
-                return json.load(f)
+                all_articles = json.load(f)
+                logging.info(f"ArticleProcessor: Loaded {len(all_articles)} existing articles from {self.articles_path}")
+                return all_articles
+        # Print warning if file doesn't exist
+        logging.warning(f"No existing articles found at {self.articles_path}, CWD: {os.getcwd()}")
         return {}
     
     def _save_articles(self):
