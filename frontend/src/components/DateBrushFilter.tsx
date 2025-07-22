@@ -40,11 +40,6 @@ const DateBrushFilter: React.FC<DateBrushFilterProps> = ({
       yPosition: Math.max(0.1, Math.min(0.9, yRandom())) // Clamp between 0.1 and 0.9
     }));
   }, [articles]);
-
-  // Create a set of search result dates for efficient lookup
-  const searchResultDates = useMemo(() => {
-    return new Set(searchResults.map(result => result.date));
-  }, [searchResults]);
   
   // Update selected range when props change
   useEffect(() => {
@@ -152,7 +147,6 @@ const DateBrushFilter: React.FC<DateBrushFilterProps> = ({
     g.append('g')
       .attr('class', 'x-axis')
       .attr('transform', `translate(0,${height})`)
-      // @ts-ignore - D3 type definition issue
       .call(xAxis)
       .selectAll('text')
       // .style('text-anchor', width < 400 ? 'middle' : 'midd')
@@ -288,39 +282,40 @@ const DateBrushFilter: React.FC<DateBrushFilterProps> = ({
     console.log('Chart initialized with selection:', minDate, 'to', maxDate);
     console.log('Width:', width, 'Height:', height);
     
-  }, [minDate, maxDate, onChange, isMounted, dimensions]);
+  }, [minDate, maxDate, onChange, articlePositions, searchResults, isMounted, dimensions]);
 
       // Update only the visual styling when selection changes
   useEffect(() => {
     if (!svgRef.current || !isMounted || dimensions.width === 0) return;
 
     const svg = d3.select(svgRef.current);
-    const circles = svg.selectAll('.article-dot');
+    const circles = svg.selectAll('.article-dot')
+      .data(articles);
     
     circles
-        .attr('stroke', (d: any) => {
-          if (!selectedRange.start || !selectedRange.end) return 'none';
-          const articleDate = new Date(d.date);
-          const startDate = new Date(selectedRange.start);
-          const endDate = new Date(selectedRange.end);
-          return articleDate >= startDate && articleDate <= endDate ? '#1e40af' : 'none';
-        })
-        .attr('stroke-width', (d: any) => {
-          if (!selectedRange.start || !selectedRange.end) return 0;
-          const articleDate = new Date(d.date);
-          const startDate = new Date(selectedRange.start);
-          const endDate = new Date(selectedRange.end);
-          return articleDate >= startDate && articleDate <= endDate ? 1.5 : 0;
-        })
-        .attr('fill-opacity', (d: any) => {
-          if (!selectedRange.start || !selectedRange.end) return 0.3;
-          const articleDate = new Date(d.date);
-          const startDate = new Date(selectedRange.start);
-          const endDate = new Date(selectedRange.end);
-          return articleDate >= startDate && articleDate <= endDate ? 1 : 0.3;
-        });
+    .attr('stroke', (d: Article) => {
+      if (!selectedRange.start || !selectedRange.end) return 'none';
+      const articleDate = new Date(d.date);
+      const startDate = new Date(selectedRange.start);
+      const endDate = new Date(selectedRange.end);
+      return articleDate >= startDate && articleDate <= endDate ? '#1e40af' : 'none';
+    })
+    .attr('stroke-width', (d: Article) => {
+      if (!selectedRange.start || !selectedRange.end) return 0;
+      const articleDate = new Date(d.date);
+      const startDate = new Date(selectedRange.start);
+      const endDate = new Date(selectedRange.end);
+      return articleDate >= startDate && articleDate <= endDate ? 1.5 : 0;
+    })
+    .attr('fill-opacity', (d: Article) => {
+      if (!selectedRange.start || !selectedRange.end) return 0.3;
+      const articleDate = new Date(d.date);
+      const startDate = new Date(selectedRange.start);
+      const endDate = new Date(selectedRange.end);
+      return articleDate >= startDate && articleDate <= endDate ? 1 : 0.3;
+    });
 
-  }, [selectedRange, dimensions, isMounted]);
+  }, [selectedRange, dimensions, isMounted, articles]);
   
   return (
     <div className="date-brush-filter w-full" ref={containerRef}>
