@@ -112,7 +112,7 @@ export default function Home() {
   }, [allResults])
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <main className="container mx-auto max-w-5xl px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 font-sans">Economics Observatory Search</h1>
       
       <SearchBar 

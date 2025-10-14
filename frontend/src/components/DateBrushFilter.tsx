@@ -151,7 +151,7 @@ const DateBrushFilter: React.FC<DateBrushFilterProps> = ({
       .selectAll('text')
       // .style('text-anchor', width < 400 ? 'middle' : 'midd')
       .style('text-anchor', 'middle')
-      .style('fill', '#6b7280')
+      .style('fill', '#676A86')
       // .attr('transform', width < 400 ? 'rotate(0)' : 'rotate(-45)')
       // .attr('dx', width < 400 ? '0' : '-0.8em')
       // .attr('dy', width < 400 ? '0.71em' : '0.15em');
@@ -194,8 +194,9 @@ const DateBrushFilter: React.FC<DateBrushFilterProps> = ({
             const isSearchResult = searchResults.some(r => 
                 r.title === d.title && r.date === d.date
             );
-            return isSearchResult ? '#ef4444' : '#6b7280';
+            return isSearchResult ? '#ef4444' : '#6b728080';
         })
+
     
     // Create brush
     const brush = d3.brushX()
@@ -249,7 +250,7 @@ const DateBrushFilter: React.FC<DateBrushFilterProps> = ({
     
     // Style the brush handles
     brushGroup.selectAll('.handle')
-      .attr('fill', '#3b82f6')
+      .attr('fill', '#179FDB')
       // .style('width', '8px')
       .attr('fill-opacity', 0.6);
     
@@ -261,7 +262,7 @@ const DateBrushFilter: React.FC<DateBrushFilterProps> = ({
       .style('cursor', 'ew-resize');
     
     brushGroup.select('.selection')
-      .attr('stroke', '#3b82f6')
+      .attr('stroke', '#179FDB')
       .attr('stroke-width', 1.5);
     
     // Initialize brush with provided dates

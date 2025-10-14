@@ -13,9 +13,9 @@ interface ResultCardProps {
     const categoryClass = categoryColours[category]?.class || "";
 
     return (
-      <div className="mb-4 p-4 border rounded-lg hover:shadow-md transition-shadow">
+      <div className="mb-4 p-4 border rounded-lg hover:shadow-md transition-shadow bg-[#f7f7f7]">
         <h2 className="text-xl font-semibold mb-2">
-          <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+          <a href={url} target="_blank" rel="noopener noreferrer" className="text-[#122B39] hover:text-[#E6224B] ease-in-out duration-300">
             {title}
           </a>
         </h2>
