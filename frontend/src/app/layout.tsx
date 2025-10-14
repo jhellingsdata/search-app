@@ -1,4 +1,5 @@
 import './globals.css'
+import { circular } from './fonts/circular'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={circular.variable}>
       <body>
         {children}
       </body>
