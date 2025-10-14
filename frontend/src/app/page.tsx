@@ -24,6 +24,7 @@ export default function Home() {
   const [query, setQuery] = useState('')
   const [allResults, setAllResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
+  const [includeNews, setIncludeNews] = useState(true)
 
   // Date range state
   const minDate = '2020-05-01'
@@ -50,6 +51,12 @@ export default function Home() {
       return resultDate >= fromDate && resultDate <= toDate
     })
   }, [allResults, dateFrom, dateTo])
+
+  // Apply category toggle (include/exclude News)
+  const visibleResults = useMemo(() => {
+    if (includeNews) return filteredResults
+    return filteredResults.filter(r => (r.main_category || '').trim().toLowerCase() !== 'news')
+  }, [filteredResults, includeNews])
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -106,7 +113,7 @@ export default function Home() {
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Economics Observatory Search</h1>
+      <h1 className="text-3xl font-bold mb-8 font-sans">Economics Observatory Search</h1>
       
       <SearchBar 
         query={query}
@@ -122,18 +129,31 @@ export default function Home() {
         onChange={handleDateRangeChange}
       />
 
+      {/* Include/Exclude News toggle */}
+      <div className="mb-4">
+        <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+          <input
+            type="checkbox"
+            checked={includeNews}
+            onChange={(e) => setIncludeNews(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span>Include Newsletters</span>
+        </label>
+      </div>
+
       {query && (
         <div className="mb-4 text-sm text-gray-600">
-          Showing {filteredResults.length} of {allResults.length} results
-          {filteredResults.length !== allResults.length && ' (filtered by date)'}
+          Showing {visibleResults.length} of {allResults.length} results
         </div>
       )}
+    
 
       {loading ? (
         <div className="text-center py-8">Loading...</div>
       ) : (
         <div>
-          {filteredResults.map((result, index) => (
+          {visibleResults.map((result, index) => (
             <ResultCard
               key={index}
               title={result.title}
