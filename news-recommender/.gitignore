@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+.env.*
+!.env.example
+dist/
+*.egg-info/
+.ruff_cache/
+.pytest_cache/
+
+# Data snapshots — commit structure but not data
+data/snapshots/*.json
+data/snapshots/*.csv
+!data/snapshots/.gitkeep
