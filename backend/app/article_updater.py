@@ -9,7 +9,11 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 
 class ArticleUpdater:
-    """Handles targeted updates of specific articles."""
+    """Handles targeted updates of specific articles.
+
+    Superseded by `update_articles.py --article <url-or-slug>`, which also records the WordPress post ID,
+    follows permalink changes automatically and protects stored fields from a bad scrape.
+    """
     
     def __init__(self):
         self.article_processor = ArticleProcessor()

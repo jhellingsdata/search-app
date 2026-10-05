@@ -170,6 +170,10 @@ class PineconeManager:
         
         return results
     
+    def list_article_ids(self) -> set:
+        """Get the slugs of every article currently stored in the index."""
+        return {vector_id for page in self.index.list() for vector_id in page}
+
     def delete_article(self, slug: str):
         """Delete an article from the index by slug."""
         self.index.delete(ids=[slug])
@@ -183,13 +187,17 @@ if __name__ == "__main__":
     # Initialise manager
     manager = PineconeManager()
     
-    # Load embeddings (assuming they're saved from previous step)
-    # Find latest embeddings file in data folder
-    # Find latest embeddings file in data folder
-    embeddings_files = [f for f in os.listdir('data') if f.startswith('embeddings_') and f.endswith('.pkl')]
-    # latest_embeddings_file = max(embeddings_files, key=lambda x: datetime.strptime(x.split('_')[1], '%Y%m%d_%H%M%S'))
-    latest_embeddings_file = max(embeddings_files, key=lambda x: datetime.strptime(x.split('_', maxsplit=1)[1].split('.')[0], '%Y%m%d_%H%M%S'))
-    embeddings_df = pd.read_pickle(f'data/{latest_embeddings_file}')
+    # Upload a given embeddings file (e.g. a pinecone_snapshot_*.pkl), or the latest backup saved by
+    # update_articles.py. Run from backend/: uv run app/pinecone_manager.py [data/embeddings/<file>.pkl]
+    import sys
+    if len(sys.argv) > 1:
+        embeddings_path = sys.argv[1]
+    else:
+        embeddings_files = [f for f in os.listdir('data/embeddings') if f.startswith('embeddings_') and f.endswith('.pkl')]
+        latest_embeddings_file = max(embeddings_files, key=lambda x: datetime.strptime(x.split('_', maxsplit=1)[1].split('.')[0], '%Y%m%d_%H%M%S'))
+        embeddings_path = f'data/embeddings/{latest_embeddings_file}'
+    print(f"Uploading {embeddings_path}")
+    embeddings_df = pd.read_pickle(embeddings_path)
     
     # Upload to Pinecone
     manager.upsert_articles(embeddings_df)

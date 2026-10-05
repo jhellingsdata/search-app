@@ -16,6 +16,8 @@ import boto3
 import json
 import os
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 class SearchQuery(BaseModel):
     """Pydantic model for search requests"""
     query: str

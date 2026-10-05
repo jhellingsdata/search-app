@@ -9,29 +9,35 @@ import os
 from dotenv import load_dotenv, find_dotenv
 import logging
 
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('embedding_processing.log'),
-        logging.StreamHandler()
-    ]
-)
 
-# # Load environment variables
-# load_dotenv(find_dotenv())
-# # # Check if load env and find env have worked
-# # if os.getenv('OPENAI_API_KEY') is None:
-# #     raise ValueError("OPENAI_API_KEY not found in environment variables")
-# print(os.getenv('ECO_USERNAME'))
-# client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+def prepare_text_for_embedding(article: Dict, text_chunk_size: int = 1000) -> str:
+    """
+    Prepare article text for embedding using our enhanced strategy.
+    Weight title more heavily by repeating it.
+    Include teaser, start of main text, and categories.
+    """
+    # Get first part of main text (split by newlines to get paragraphs)
+    text_paragraphs = article['text'].split('\n')
+    initial_paragraphs = ' '.join(text_paragraphs[:3])  # First 3 paragraphs
+    if len(initial_paragraphs) > text_chunk_size:
+        initial_paragraphs = initial_paragraphs[:text_chunk_size] + '...'
+
+    # Combine categories
+    categories = [article['main_category']] + article['secondary_categories']
+    category_text = ', '.join(categories)
+
+    # Combine all elements with clear section markers
+    combined_text = f"{article['title']} {article['title']} | {article['teaser']} | "\
+                   f"{initial_paragraphs} | Categories: {category_text}"
+
+    return combined_text.replace("\n", " ").strip()
+
 
 class ArticleEmbeddingProcessor:
     def __init__(self,
                  *, 
                  embedding_model: str = "text-embedding-3-small",
-                 tracking_file: str = "data-processing/embedded_articles.csv",
+                 tracking_file: str = "data/embedded_articles.csv",
                  text_chunk_size: int = 1000,
                  env_path: str | Path | None = None,
                  api_key: str | None = None
@@ -83,26 +89,7 @@ class ArticleEmbeddingProcessor:
             return df
     
     def _prepare_text_for_embedding(self, article: Dict) -> str:
-        """
-        Prepare article text for embedding using our enhanced strategy.
-        Weight title more heavily by repeating it.
-        Include teaser, start of main text, and categories.
-        """
-        # Get first part of main text (split by newlines to get paragraphs)
-        text_paragraphs = article['text'].split('\n')
-        initial_paragraphs = ' '.join(text_paragraphs[:3])  # First 3 paragraphs
-        if len(initial_paragraphs) > self.text_chunk_size:
-            initial_paragraphs = initial_paragraphs[:self.text_chunk_size] + '...'
-            
-        # Combine categories
-        categories = [article['main_category']] + article['secondary_categories']
-        category_text = ', '.join(categories)
-        
-        # Combine all elements with clear section markers
-        combined_text = f"{article['title']} {article['title']} | {article['teaser']} | "\
-                       f"{initial_paragraphs} | Categories: {category_text}"
-        
-        return combined_text.replace("\n", " ").strip()
+        return prepare_text_for_embedding(article, self.text_chunk_size)
     
     def _get_embedding(self, text: str) -> Tuple[List[float], int]:
         """Generate embedding vector and return with token count."""
@@ -158,7 +145,7 @@ class ArticleEmbeddingProcessor:
                 self.processed_articles.to_csv(self.tracking_file, index=False)
                 
             except Exception as e:
-                print(f"Error processing article {slug}: {str(e)}")
+                logging.error(f"Error embedding article {slug}: {str(e)}")
                 continue
         
         return pd.DataFrame(new_embeddings)
