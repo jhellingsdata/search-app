@@ -61,3 +61,7 @@ dist/
 *data/snapshots/*.json
 *data/snapshots/*.csv
 !data/snapshots/.gitkeep
+# Article update pipeline outputs (see backend/UPDATING.md)
+*.log
+backend/logs/
+backend/data/embeddings/
