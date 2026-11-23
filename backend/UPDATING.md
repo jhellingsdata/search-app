@@ -133,8 +133,6 @@ uv run update_articles.py --skip-scrape --upload-s3
 
 Then restart the Elastic Beanstalk environment (AWS console → Elastic Beanstalk → the search-app environment → Actions → Restart app server(s)). **The upload alone isn't enough:** the running API keeps serving the copy it loaded at startup until it restarts.
 
-> **Pending (5 October 2026):** S3 was refreshed to 1,111 articles (the previous copy dated from February 2025), but the Elastic Beanstalk environment hasn't been restarted yet, so the deployed `/stats` and `/categories` still reflect the old data.
-
 **7. Spot-check.** Search for one of the new articles:
 
 ```bash

@@ -1,10 +1,16 @@
 # Python virtual environments
 venv/
+.venv/
 env/
 .env/
 
 # Environment variables
 .env
+.env.*
+!.env.example
+
+# Private working files: kept on Josh's machine for agents to read, never published
+writing_guide.md
 
 # Docker
 docker-compose.yml
@@ -29,8 +35,9 @@ build/
 *.swp
 *.swo
 
-# Test cache
+# Test and lint caches
 .pytest_cache/
+.ruff_cache/
 .coverage
 htmlcov/
 
@@ -44,23 +51,10 @@ Thumbs.db
 
 
 
-## NEWS Recommender ignores
-.venv/
-__pycache__/
-*.pyc
-*.pyo
-.env
-.env.*
-!.env.example
-dist/
-*.egg-info/
-.ruff_cache/
-.pytest_cache/
+# Newsdesk: SAM build output, local database copies and dry-run digests
+newsdesk/.aws-sam/
+newsdesk/local/
 
-# Data snapshots — commit structure but not data
-*data/snapshots/*.json
-*data/snapshots/*.csv
-!data/snapshots/.gitkeep
 # Article update pipeline outputs (see backend/UPDATING.md)
 *.log
 backend/logs/

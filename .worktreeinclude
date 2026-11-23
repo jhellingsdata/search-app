@@ -1,0 +1,3 @@
+# Gitignored files that Claude Code copies into each new worktree, so agents working there can still read them.
+writing_guide.md
+.env
